@@ -1,0 +1,111 @@
+{
+  "name": "Exercise Master ORBAT",
+  "type": "Division",
+  "subordinates": [
+    {
+      "name": "Blue Force Division",
+      "type": "Division",
+      "subordinates": [
+        {
+          "name": "1st Blue Infantry Brigade",
+          "type": "Brigade",
+          "subordinates": [
+            {
+              "name": "11th Infantry Battalion",
+              "type": "Battalion",
+              "subordinates": [
+                { "name": "Alpha Company", "type": "Company", "subordinates": [] },
+                { "name": "Bravo Company", "type": "Company", "subordinates": [] },
+                { "name": "Charlie Company", "type": "Company", "subordinates": [] }
+              ]
+            },
+            {
+              "name": "12th Infantry Battalion",
+              "type": "Battalion",
+              "subordinates": [
+                { "name": "Delta Company", "type": "Company", "subordinates": [] },
+                { "name": "Echo Company", "type": "Company", "subordinates": [] }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "2nd Blue Armored Brigade",
+          "type": "Brigade",
+          "subordinates": [
+            {
+              "name": "21st Armored Regiment",
+              "type": "Regiment",
+              "subordinates": [
+                { "name": "Tank Company A", "type": "Company", "subordinates": [] },
+                { "name": "Tank Company B", "type": "Company", "subordinates": [] }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "3rd Blue Engineering Brigade",
+          "type": "Brigade",
+          "subordinates": [
+            {
+              "name": "31st Combat Engineer Battalion",
+              "type": "Battalion",
+              "subordinates": [
+                { "name": "Sapper Company 1", "type": "Company", "subordinates": [] },
+                { "name": "Bridge Company 2", "type": "Company", "subordinates": [] }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Red Force Division",
+      "type": "Division",
+      "subordinates": [
+        {
+          "name": "9th Red Infantry Brigade",
+          "type": "Brigade",
+          "subordinates": [
+            {
+              "name": "91st Motorized Battalion",
+              "type": "Battalion",
+              "subordinates": [
+                { "name": "Company 1", "type": "Company", "subordinates": [] },
+                { "name": "Company 2", "type": "Company", "subordinates": [] },
+                { "name": "Company 3", "type": "Company", "subordinates": [] }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "8th Red Armored Brigade",
+          "type": "Brigade",
+          "subordinates": [
+            {
+              "name": "81st Tank Regiment",
+              "type": "Regiment",
+              "subordinates": [
+                { "name": "Armor Company X", "type": "Company", "subordinates": [] },
+                { "name": "Armor Company Y", "type": "Company", "subordinates": [] }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "7th Red Engineering Brigade",
+          "type": "Brigade",
+          "subordinates": [
+            {
+              "name": "71st Engineer Battalion",
+              "type": "Battalion",
+              "subordinates": [
+                { "name": "Pioneer Company A", "type": "Company", "subordinates": [] }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
