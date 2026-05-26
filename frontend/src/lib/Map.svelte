@@ -322,17 +322,59 @@
       return;
     }
     try {
+      const bodyPayload = {
+        name: setupPlanName,
+        exercise_name: setupExName,
+        description: setupPlanDesc,
+        blue_boundary: setupBoundaryBlue ? JSON.stringify(setupBoundaryBlue) : null,
+        red_boundary: setupBoundaryRed ? JSON.stringify(setupBoundaryRed) : null,
+        region_id: setupRegionId,
+        orbat: setupOrbatData ? JSON.stringify(setupOrbatData) : null
+      };
       const res = await fetch('http://localhost:8000/api/plans', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${$auth.token}`,
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ name: setupPlanName, description: setupPlanDesc })
+        body: JSON.stringify(bodyPayload)
       });
       if (res.ok) {
         const newPlan = await res.json();
         savedPlans = [...savedPlans, newPlan];
+        setupError = '';
+      } else {
+        const err = await res.json();
+        setupError = err.detail;
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  async function updatePlan(id: number) {
+    if (!setupPlanName) return;
+    try {
+      const bodyPayload = {
+        name: setupPlanName,
+        exercise_name: setupExName,
+        description: setupPlanDesc,
+        blue_boundary: setupBoundaryBlue ? JSON.stringify(setupBoundaryBlue) : null,
+        red_boundary: setupBoundaryRed ? JSON.stringify(setupBoundaryRed) : null,
+        region_id: setupRegionId,
+        orbat: setupOrbatData ? JSON.stringify(setupOrbatData) : null
+      };
+      const res = await fetch(`http://localhost:8000/api/plans/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${$auth.token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(bodyPayload)
+      });
+      if (res.ok) {
+        const updatedPlan = await res.json();
+        savedPlans = savedPlans.map(p => p.id === id ? updatedPlan : p);
         setupError = '';
       } else {
         const err = await res.json();
@@ -378,7 +420,25 @@
   function selectPlan(plan: any) {
     setupPlanName = plan.name;
     setupPlanDesc = plan.description;
-    setupExName = plan.name;
+    setupExName = plan.exercise_name || plan.name;
+    setupRegionId = plan.region_id || 'loc';
+    try {
+      if (plan.blue_boundary) setupBoundaryBlue = JSON.parse(plan.blue_boundary);
+      if (plan.red_boundary) setupBoundaryRed = JSON.parse(plan.red_boundary);
+      if (plan.orbat) setupOrbatData = JSON.parse(plan.orbat);
+      
+      setTimeout(() => {
+        if (setupBoundaryBlue || setupBoundaryRed) {
+          redrawBoundaryProgress();
+        }
+        if (setupBoundaryBlue && view) {
+          try {
+            const poly = Polygon.fromJSON(setupBoundaryBlue);
+            view.goTo({ target: poly, tilt: 0, heading: 0 }, { duration: 2500 });
+          } catch (e) { console.error(e); }
+        }
+      }, 500);
+    } catch (e) { console.error(e); }
   }
   let setupOrbatFile: File | null = null;
   let setupOrbatData: any = null;
@@ -440,8 +500,13 @@
       if (!setupTeam1 || !setupTeam2) { setupError = 'SELECT TWO ACTIVE TEAMS'; return; }
       if (!setupBoundaryBlue || !setupBoundaryRed) { setupError = 'PLEASE DRAW BOTH OPERATIONAL BOUNDARIES'; return; }
       
-      if (setupPlanName && !savedPlans.find(p => p.name === setupPlanName)) {
-        await savePlan();
+      if (setupPlanName) {
+        const existing = savedPlans.find(p => p.name === setupPlanName);
+        if (!existing) {
+          await savePlan();
+        } else {
+          await updatePlan(existing.id);
+        }
       }
 
       try {
@@ -473,6 +538,16 @@
     }
     
     showExerciseDialog = false;
+    showPlanManager = false;
+    setupPlanName = '';
+    setupPlanDesc = '';
+    setupExName = '';
+    setupBoundaryBlue = null;
+    setupBoundaryRed = null;
+    setupTeam1 = null;
+    setupTeam2 = null;
+    setupOrbatData = null;
+    setupOrbatFile = null;
     goHome();
   }
 
@@ -1113,8 +1188,8 @@
               <div class="setup-file-display">
                 {#if isCheckingOrbat}
                   <div class="spinner" style="width: 14px; height: 14px; border: 2px solid rgba(255,255,255,0.2); border-top-color: #fff; border-radius: 50%; animation: spin 1s linear infinite; display: inline-block; vertical-align: middle;"></div> Checking format...
-                {:else if setupOrbatFile}
-                  📄 {setupOrbatFile.name} {#if setupOrbatData}<span style="color: #22c55e; margin-left:6px;">✓</span>{/if}
+                {:else if setupOrbatFile || setupOrbatData}
+                  📄 {setupOrbatFile ? setupOrbatFile.name : 'LOADED FROM EXERCISE'} <span style="color: #22c55e; margin-left:6px;">✓</span>
                 {:else}
                   CLICK TO BROWSE JSON
                 {/if}
@@ -1159,7 +1234,7 @@
           }}>
             <option value="">SELECT EXERCISE...</option>
             {#each savedPlans as plan}
-              <option value={plan.id}>{plan.name}</option>
+              <option value={plan.id}>{plan.exercise_name}</option>
             {/each}
           </select>
 

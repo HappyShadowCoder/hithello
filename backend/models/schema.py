@@ -28,8 +28,13 @@ class ExercisePlan(Base):
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     name = Column(String, nullable=False)
+    exercise_name = Column(String, nullable=True)
     description = Column(String, nullable=True)
     sort_order = Column(Integer, nullable=False, default=0)
+    blue_boundary = Column(String, nullable=True)
+    red_boundary = Column(String, nullable=True)
+    region_id = Column(String, nullable=True)
+    orbat = Column(String, nullable=True)
     
     user = relationship("User")
 
